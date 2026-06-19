@@ -3,7 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#CCCCCC">
+    android:background="?android:attr/windowBackground">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/my_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.DayNight.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.DayNight"
+        android:layout_alignParentTop="true" />
 
     <LinearLayout
         android:id="@+id/bottom_bar"
@@ -12,7 +21,7 @@
         android:layout_alignParentBottom="true"
         android:orientation="horizontal"
         android:gravity="center"
-        android:background="#E0E0E0"
+        android:background="?android:attr/colorBackground"
         android:padding="16dp">
 
         <ImageButton
@@ -46,20 +55,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/top_bar"
+        android:layout_below="@id/my_toolbar"
         android:layout_above="@id/bottom_bar"
-        android:background="#555555"
+        android:background="?android:attr/windowBackground"
         android:orientation="vertical"
         android:padding="16dp">
-
-        <LinearLayout
-            android:id="@+id/top_bar"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#E0E0E0"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp" />
 
         <EditText
             android:id="@+id/txt_notes"
@@ -68,8 +68,8 @@
             android:background="@null"
             android:gravity="top"
             android:hint="As anotações aparecerão aqui..."
-            android:textColor="#FFFFFF"
-            android:textColorHint="#AAAAAA"
+            android:textColor="?android:attr/textColorPrimary"
+            android:textColorHint="?android:attr/textColorHint"
             android:textSize="18sp" />
     </LinearLayout>
 

@@ -1,14 +1,20 @@
 package com.github.caicosantos1998.voicenote;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -16,6 +22,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity {
+    private String currentLanguage = "pt";
 
     private EditText textNotes;
     private ImageButton bttSpeaker;
@@ -26,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(toolbar);
 
         textNotes = findViewById(R.id.txt_notes);
         bttSpeaker = findViewById(R.id.btt_speaker);
@@ -42,8 +51,10 @@ public class MainActivity extends AppCompatActivity {
         bttMic.setOnClickListener(v -> {
             Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
             intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "pt-BR");
-            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...");
+            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, currentLanguage.
+                    equals("en") ? "en-US" : "pt-BR");
+            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, currentLanguage.
+                    equals("en") ? "Speak now..." : "Fale agora...");
 
             try {
                 startActivityForResult(intent, 100);
@@ -84,7 +95,12 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processText(String fullText) {
-        String regexPattern = "^(.*?) (?:da|do) (.*?) deve (\\d+)";
+        String regexPattern;
+        if (currentLanguage.equals("en")) {
+            regexPattern = "^(.*?) from (.*?) owes (\\d+)";
+        } else {
+            regexPattern = "^(.*?) (?:da|do) (.*?) deve (\\d+)";
+        }
 
         Pattern pattern = Pattern.compile(regexPattern, Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(fullText.trim());
@@ -94,10 +110,13 @@ public class MainActivity extends AppCompatActivity {
             String valueString = matcher.group(3).trim();
             int value = Integer.parseInt(valueString);
 
-            String message = "Nome: " + name + "\nLocal: " + location + "\nDeve: R$ " + value;
+            String message = currentLanguage.equals("en")
+                    ? "Name: " + name + "\nFrom: " + location + "\nOwes: $" + value
+                    : "Nome: " + name + "\nLocal: " + location + "\nDeve: R$ " + value;
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
             String oldText = textNotes.getText().toString();
+            textNotes.setText(oldText.isEmpty() ? fullText : oldText + "\n" + fullText);
             if (!oldText.isEmpty()) {
                 textNotes.setText(oldText + "\n" + fullText);
             } else {
@@ -105,9 +124,43 @@ public class MainActivity extends AppCompatActivity {
             }
 
         } else {
-            Toast.makeText(this,
-                    "Não entendi o padrão. Tente: [Nome] da [Rua] deve [Valor]",
-                    Toast.LENGTH_LONG).show();
+            String alert = currentLanguage.equals("en")
+                    ? "Incorrect pattern. Try: [Name] from [Street] owes [Value]"
+                    : "Padrão incorreto. Tente: [Nome] da [Rua] deve [Valor]";
+            Toast.makeText(this, alert, Toast.LENGTH_LONG).show();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.lang_pt) {
+            currentLanguage = "pt";
+            if (tts != null) tts.setLanguage(new Locale("pt", "BR"));
+            Toast.makeText(this, "Idioma alterado para Português", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.lang_en) {
+            currentLanguage = "en";
+            if (tts != null) tts.setLanguage(Locale.US);
+            Toast.makeText(this, "Language changed to English", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+
+        if (id == R.id.theme_light) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            return true;
+        } else if (id == R.id.theme_dark) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 }
