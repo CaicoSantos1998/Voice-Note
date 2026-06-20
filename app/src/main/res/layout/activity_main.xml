@@ -24,32 +24,35 @@
         android:background="?android:attr/colorBackground"
         android:padding="16dp">
 
-        <ImageButton
-            android:id="@+id/btt_mic"
-            android:layout_width="70dp"
-            android:layout_height="60dp"
-            android:background="@drawable/background_orange_circle"
-            android:scaleType="fitXY"
-            android:src="@android:drawable/ic_btn_speak_now"
-            app:tint="#FFFFFF" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/btt_mic"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:background="@drawable/background_orange_circle"
+                android:scaleType="fitXY"
+                android:src="@android:drawable/ic_btn_speak_now"
+                app:tint="#FFFFFF" />
+        </LinearLayout>
 
-        <ImageButton
-            android:id="@+id/btn_home"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_marginHorizontal="40dp"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_dialog_dialer"
-            android:visibility="invisible" />
-
-        <ImageButton
-            android:id="@+id/btt_speaker"
-            android:layout_width="70dp"
-            android:layout_height="60dp"
-            android:background="@drawable/background_orange_circle"
-            android:scaleType="fitXY"
-            android:src="@android:drawable/ic_lock_silent_mode_off"
-            app:tint="#FFFFFF" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center">
+            <ImageButton
+                android:id="@+id/btt_speaker"
+                android:layout_width="70dp"
+                android:layout_height="60dp"
+                android:background="@drawable/background_orange_circle"
+                android:scaleType="fitXY"
+                android:src="@android:drawable/ic_lock_silent_mode_off"
+                app:tint="#FFFFFF" />
+        </LinearLayout>
     </LinearLayout>
 
     <LinearLayout
