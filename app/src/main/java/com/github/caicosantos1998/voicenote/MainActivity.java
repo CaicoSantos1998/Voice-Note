@@ -135,12 +135,6 @@ public class MainActivity extends AppCompatActivity {
 
             String oldText = textNotes.getText().toString();
             textNotes.setText(oldText.isEmpty() ? fullText : oldText + "\n" + fullText);
-            if (!oldText.isEmpty()) {
-                textNotes.setText(oldText + "\n" + fullText);
-            } else {
-                textNotes.setText(fullText);
-            }
-
         } else {
             String alert = currentLanguage.equals("en")
                     ? "Incorrect pattern. Try: [Name] from [Street] owes [Value]"
