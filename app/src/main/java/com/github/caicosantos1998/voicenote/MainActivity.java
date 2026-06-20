@@ -95,6 +95,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void processText(String fullText) {
+        String voiceInput = fullText.toLowerCase().trim()
+                .replaceAll("[.\\,?\\!]", "");
+
+        if (voiceInput.contains("modo claro") || voiceInput.contains("modo dia") ||
+                voiceInput.contains("light mode")) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+            Toast.makeText(this, currentLanguage.equals("en")
+                    ? "Light mode activated" : "Modo claro ativado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (voiceInput.contains("modo escuro") || voiceInput.contains("modo noite") ||
+                voiceInput.contains("dark mode") || voiceInput.contains("modo noturno")) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+            Toast.makeText(this, currentLanguage.equals("en")
+                    ? "Dark mode activated" : "Modo escuro ativado", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         String regexPattern;
         if (currentLanguage.equals("en")) {
             regexPattern = "^(.*?) from (.*?) owes (\\d+)";
