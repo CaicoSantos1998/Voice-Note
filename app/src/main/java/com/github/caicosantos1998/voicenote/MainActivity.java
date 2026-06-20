@@ -98,18 +98,33 @@ public class MainActivity extends AppCompatActivity {
         String voiceInput = fullText.toLowerCase().trim()
                 .replaceAll("[.\\,?\\!]", "");
 
-        if (voiceInput.contains("modo claro") || voiceInput.contains("modo dia") ||
-                voiceInput.contains("light mode")) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-            Toast.makeText(this, currentLanguage.equals("en")
-                    ? "Light mode activated" : "Modo claro ativado", Toast.LENGTH_SHORT).show();
-            return;
-        }
-        if (voiceInput.contains("modo escuro") || voiceInput.contains("modo noite") ||
-                voiceInput.contains("dark mode") || voiceInput.contains("modo noturno")) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-            Toast.makeText(this, currentLanguage.equals("en")
-                    ? "Dark mode activated" : "Modo escuro ativado", Toast.LENGTH_SHORT).show();
+        boolean attemptsChangeTheme = voiceInput.contains("tema") || voiceInput.contains("modo") ||
+                voiceInput.contains("theme") || voiceInput.contains("mode") ||
+                voiceInput.contains("cor") || voiceInput.contains("tela") ||
+                voiceInput.contains("color") || voiceInput.contains("screen") ||
+                voiceInput.contains("claro") || voiceInput.contains("escuro") ||
+                voiceInput.contains("light") || voiceInput.contains("dark") ||
+                voiceInput.contains("night") || voiceInput.contains("day") ||
+                voiceInput.contains("noite") || voiceInput.contains("dia");
+        if(attemptsChangeTheme) {
+            if (voiceInput.contains("modo claro") || voiceInput.contains("modo dia") ||
+                    voiceInput.contains("light mode")) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                Toast.makeText(this, currentLanguage.equals("en")
+                        ? "Light mode activated" : "Modo claro ativado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if (voiceInput.contains("modo escuro") || voiceInput.contains("modo noite") ||
+                    voiceInput.contains("dark mode") || voiceInput.contains("modo noturno")) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                Toast.makeText(this, currentLanguage.equals("en")
+                        ? "Dark mode activated" : "Modo escuro ativado", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            String messageAlert = currentLanguage.equals("en")
+                    ? "To change theme say: 'Light mode' or 'Dark mode'"
+                    : "Para mudar o tema fale: 'Modo claro' ou 'Modo escuro'";
+            Toast.makeText(this, messageAlert, Toast.LENGTH_LONG).show();
             return;
         }
 
