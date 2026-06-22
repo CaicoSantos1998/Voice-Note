@@ -1,7 +1,6 @@
 package com.github.caicosantos1998.voicenote;
 
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
@@ -24,6 +23,7 @@ import java.util.regex.Pattern;
 public class MainActivity extends AppCompatActivity {
     private String currentLanguage = "pt";
 
+    private DatabaseVoiceNote databaseVoiceNote;
     private EditText textNotes;
     private ImageButton bttSpeaker;
     private ImageButton bttMic;
@@ -45,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 tts.setLanguage(new Locale("pt", "BR"));
             }
         });
+        databaseVoiceNote = new DatabaseVoiceNote(this);
+        String savedNotes = databaseVoiceNote.getAllNotes();
+        textNotes.setText(savedNotes);
 
         bttSpeaker.setOnClickListener(v -> speakText());
 
@@ -150,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
             String oldText = textNotes.getText().toString();
             textNotes.setText(oldText.isEmpty() ? fullText : oldText + "\n" + fullText);
+            databaseVoiceNote.insertNote(fullText);
         } else {
             String alert = currentLanguage.equals("en")
                     ? "Incorrect pattern. Try: [Name] from [Street] owes [Value]"
