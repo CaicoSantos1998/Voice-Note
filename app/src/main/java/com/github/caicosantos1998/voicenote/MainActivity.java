@@ -48,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         databaseVoiceNote = new DatabaseVoiceNote(this);
         String savedNotes = databaseVoiceNote.getAllNotes();
         textNotes.setText(savedNotes);
+        String namesHome = databaseVoiceNote.getTagName(currentLanguage);
+        textNotes.setText(namesHome);
 
         bttSpeaker.setOnClickListener(v -> speakText());
 
@@ -131,6 +133,33 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
+        boolean isSearching = voiceInput.contains("buscar")||voiceInput.contains("procurar")||
+                voiceInput.contains("encontre") || voiceInput.contains("search") ||
+                voiceInput.contains("find");
+
+        if(isSearching) {
+            String searchName = voiceInput
+                    .replace("buscar", "")
+                    .replace("procurar", "")
+                    .replace("encontre", "")
+                    .replace("search", "")
+                    .replace("find", "")
+                    .trim();
+            if(!searchName.isEmpty()){
+                String results = databaseVoiceNote.searchPerson(searchName);
+                if(!results.isEmpty()){
+                    textNotes.setText(results);
+                    if(getSupportActionBar()!=null){
+                        getSupportActionBar().setTitle(searchName.toUpperCase());
+                    }
+                }
+            } else {
+                Toast.makeText(this, currentLanguage.equals("en")?"No records found":
+                        "Nenhum registro encontrado", Toast.LENGTH_SHORT).show();
+            }
+            return;
+        }
+
         String regexPattern;
         if (currentLanguage.equals("en")) {
             regexPattern = "^(.*?) from (.*?) owes (\\d+)";
@@ -151,9 +180,13 @@ public class MainActivity extends AppCompatActivity {
                     : "Nome: " + name + "\nLocal: " + location + "\nDeve: R$ " + value;
             Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 
-            String oldText = textNotes.getText().toString();
-            textNotes.setText(oldText.isEmpty() ? fullText : oldText + "\n" + fullText);
-            databaseVoiceNote.insertNote(fullText);
+            databaseVoiceNote.insertNote(name, location, value);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(currentLanguage
+                        .equals("en") ? "VOICE NOTE" : "NOTAS DE VOZ");
+            }
+            String tagName = databaseVoiceNote.getTagName(currentLanguage);
+            textNotes.setText(tagName);
         } else {
             String alert = currentLanguage.equals("en")
                     ? "Incorrect pattern. Try: [Name] from [Street] owes [Value]"
