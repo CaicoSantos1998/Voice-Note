@@ -1,3 +1,21 @@
 <resources>
     <string name="app_name">Voice Note</string>
+    <string-array name="searchCommand">
+        <item>buscar</item>
+        <item>procurar</item>
+        <item>encontre</item>
+        <item>search</item>
+        <item>find</item>
+    </string-array>
+    <string-array name="lightMode">
+        <item>claro</item>
+        <item>light</item>
+        <item>dia</item>
+    </string-array>
+    <string-array name="darkMode">
+        <item>escuro</item>
+        <item>dark</item>
+        <item>noite</item>
+        <item>noturno</item>
+    </string-array>
 </resources>

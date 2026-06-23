@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private TextToSpeech tts;
 
     @Override
-    protected void onCreate (Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.my_toolbar);
@@ -40,8 +40,8 @@ public class MainActivity extends AppCompatActivity {
         bttSpeaker = findViewById(R.id.btt_speaker);
         bttMic = findViewById(R.id.btt_mic);
 
-        tts = new TextToSpeech(this, status ->  {
-            if(status == TextToSpeech.SUCCESS) {
+        tts = new TextToSpeech(this, status -> {
+            if (status == TextToSpeech.SUCCESS) {
                 tts.setLanguage(new Locale("pt", "BR"));
             }
         });
@@ -83,16 +83,17 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
     private void speakText() {
         String text = textNotes.getText().toString();
-        if(!text.isEmpty()) {
+        if (!text.isEmpty()) {
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, null);
         }
     }
 
     @Override
     protected void onDestroy() {
-        if(tts != null) {
+        if (tts != null) {
             tts.stop();
             tts.shutdown();
         }
@@ -103,24 +104,33 @@ public class MainActivity extends AppCompatActivity {
         String voiceInput = fullText.toLowerCase().trim()
                 .replaceAll("[.\\,?\\!]", "");
 
-        boolean attemptsChangeTheme = voiceInput.contains("tema") || voiceInput.contains("modo") ||
-                voiceInput.contains("theme") || voiceInput.contains("mode") ||
-                voiceInput.contains("cor") || voiceInput.contains("tela") ||
-                voiceInput.contains("color") || voiceInput.contains("screen") ||
-                voiceInput.contains("claro") || voiceInput.contains("escuro") ||
-                voiceInput.contains("light") || voiceInput.contains("dark") ||
-                voiceInput.contains("night") || voiceInput.contains("day") ||
-                voiceInput.contains("noite") || voiceInput.contains("dia");
+        boolean activityLightMode = false;
+        boolean activityDarkMode = false;
+        boolean attemptsChangeTheme = false;
+        String[] lightMode = getResources().getStringArray(R.array.lightMode);
+        String[] darkMode = getResources().getStringArray(R.array.darkMode);
+        for(String keyword : lightMode) {
+            if(voiceInput.contains(keyword)){
+                activityLightMode = true;
+                attemptsChangeTheme = true;
+                break;
+            }
+        }
+        for(String keyword : darkMode) {
+            if(voiceInput.contains(keyword)){
+                activityDarkMode = true;
+                attemptsChangeTheme = true;
+                break;
+            }
+        }
         if(attemptsChangeTheme) {
-            if (voiceInput.contains("modo claro") || voiceInput.contains("modo dia") ||
-                    voiceInput.contains("light mode")) {
+            if (activityLightMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
                 Toast.makeText(this, currentLanguage.equals("en")
                         ? "Light mode activated" : "Modo claro ativado", Toast.LENGTH_SHORT).show();
                 return;
             }
-            if (voiceInput.contains("modo escuro") || voiceInput.contains("modo noite") ||
-                    voiceInput.contains("dark mode") || voiceInput.contains("modo noturno")) {
+            if (activityDarkMode) {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 Toast.makeText(this, currentLanguage.equals("en")
                         ? "Dark mode activated" : "Modo escuro ativado", Toast.LENGTH_SHORT).show();
@@ -133,28 +143,26 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        boolean isSearching = voiceInput.contains("buscar")||voiceInput.contains("procurar")||
-                voiceInput.contains("encontre") || voiceInput.contains("search") ||
-                voiceInput.contains("find");
-
+        boolean isSearching = false;
+        String[] searchCommands = getResources().getStringArray(R.array.searchCommand);
+        String searchName = voiceInput;
+        for(String sC : searchCommands) {
+            if(voiceInput.contains(sC)) {
+                isSearching = true;
+            }
+            searchName = searchName.replace(sC, "");
+        }
         if(isSearching) {
-            String searchName = voiceInput
-                    .replace("buscar", "")
-                    .replace("procurar", "")
-                    .replace("encontre", "")
-                    .replace("search", "")
-                    .replace("find", "")
-                    .trim();
-            if(!searchName.isEmpty()){
+            if (!searchName.isEmpty()) {
                 String results = databaseVoiceNote.searchPerson(searchName);
-                if(!results.isEmpty()){
+                if (!results.isEmpty()) {
                     textNotes.setText(results);
-                    if(getSupportActionBar()!=null){
+                    if (getSupportActionBar() != null) {
                         getSupportActionBar().setTitle(searchName.toUpperCase());
                     }
                 }
             } else {
-                Toast.makeText(this, currentLanguage.equals("en")?"No records found":
+                Toast.makeText(this, currentLanguage.equals("en") ? "No records found" :
                         "Nenhum registro encontrado", Toast.LENGTH_SHORT).show();
             }
             return;
